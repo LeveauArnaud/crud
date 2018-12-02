@@ -1,27 +1,39 @@
 <?php
-require 'db.php';
-$message = '';
-if (isset ($_POST['nom'])  && isset($_POST['prenom']) && isset($_POST['email']) && isset($_POST['equipe']) && isset($_POST['participants'])  && isset($_POST['paye']) ) {
-  $nom = $_POST['nom'];
-  $prenom = $_POST['prenom'];
-  $email = $_POST['email'];
-  $equipe = $_POST['equipe'];
-  $participants = $_POST['participants'];
-  $souper = $_POST['souper'];
-  $commentaires = $_POST['commentaires'];
-  $paye = $_POST['paye'];
-  $sql = 'INSERT INTO inscriptions (nom, prenom, email, equipe, participants, souper, commentaires, paye) VALUES(:nom, :prenom, :email, :equipe, :participants, :souper, :commentaires, :paye)';
-  $statement = $connection->prepare($sql);
-  if ($statement->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':equipe' => $equipe, ':participants' => $participants, ':souper' => $souper, ':commentaires' => $commentaires, ':paye' => $paye, ':id' => $id])) {
-    $message = 'data inserted successfully';
-  }
+if (isset($_POST['create'])) {
+ $nom = filter_input(INPUT_POST, 'nom');
+ $prenom = filter_input(INPUT_POST, 'prenom');
+ $email = filter_input(INPUT_POST, 'email');
+ $groupe = filter_input(INPUT_POST, 'equipe');
+ $participants = filter_input(INPUT_POST, 'participants');
+ $souper = filter_input(INPUT_POST, 'souper');
+ $commentaires = filter_input(INPUT_POST, 'commentaires');
+ $paye = filter_input(INPUT_POST, 'paye');
 
+$host = "localhost";
+$dbusername = "root";
+$dbpassword = "root";
+$dbname = "25ans";
 
+// Create connection
+$conn = new mysqli ($host, $dbusername, $dbpassword, $dbname);
 
+if (mysqli_connect_error()){
+  die('Connect Error ('. mysqli_connect_errno() .') '
+    . mysqli_connect_error());
 }
+else{
+  $sql = "INSERT INTO inscriptions (nom, prenom, email, equipe, participants, souper, commentaires, paye)
+  values ('$nom','$prenom','$email','$equipe','$participants','$souper','$commentaires','$paye')";
+  if ($conn->query($sql)){
+      	header ("Location: index.php");
+  		exit();
+  }
+  else{
+    echo "Error: ". $sql ."
+". $conn->error;
+  }}}
+?>
 
-
- ?>
 <!doctype html>
 <html lang="fr">
   <head>
@@ -55,46 +67,60 @@ if (isset ($_POST['nom'])  && isset($_POST['prenom']) && isset($_POST['email']) 
       <h2>Ajouter un participants</h2>
     </div>
     <div class="card-body">
-      <?php if(!empty($message)): ?>
-        <div class="alert alert-success">
-          <?= $message; ?>
-        </div>
-      <?php endif; ?>
-      <form method="post">
-         <div class="form-group">
-          <label for="nom">Nom</label>
-          <input value="<?= $person->nom; ?>" type="text" name="nom" id="nom" class="form-control">
-        </div>
-         <div class="form-group">
-          <label for="prenom">Prenom</label>
-          <input value="<?= $person->prenom; ?>" type="text" name="prenom" id="prenom" class="form-control">
-        </div>
+      <form method="post" autocomplete="on">
+
+
+								
+									<div class="form-group">
+										<label for="nom">Nom</label>
+										<input type="text" name="nom" placeholder="Nom" class="form-control" required>
+									</div>
+									<div class="6u 12u(mobile)">
+										<label for="prenom">Preom</label>
+										<input type="text" name="prenom" placeholder="prenom" class="form-control" required>
+									</div>
+							
+								
+									<div class="form-group">
+										<label for="email">Email</label>
+										<input type="email" name="email" placeholder="Email" class="form-control" required>
+									</div>
+									<div class="form-group">
+										<label for="equipe">Equipe</label>
+										<input type="text" name="equipe" placeholder="nom de l'équipe" class="form-control">
+									</div>
+							
+								
+									<div class="form-group">
+										<label for="souper">Souper</label>
+										<input type="text" name="souper" placeholder="nombre de personnes participant au souper" class="form-control" required>
+									</div>
+									<div class="form-group">
+									<label for="participant">Participants</label>
+									<select name="participants" class="form-control" required>
+  										<option value="1">1 membre</option>
+  										<option value="2">2 membres</option>
+ 										<option value="3">3 membres</option>
+  										<option value="4">4 membres</option>
+  										<option value="5">5 membres</option>
+  										<option value="6">6 membres</option>
+									</select>
+									</div>
+		
+								
+									<div class="form-group">
+										<label for="commentaire">Commentaire</label>
+										<textarea name="commentaires" placeholder="Commentaires" class="form-control" ></textarea>
+									</div>
+									<div class="form-group">
+										<label for="paye">Payé</label>
+										<input type="text" name="paye" placeholder="nombre de personnes participant au souper" class="form-control" required>
+									</div>								
+											
+
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" value="<?= $person->email; ?>" name="email" id="email" class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="equipe">Equipe</label>
-          <input value="<?= $person->equipe; ?>" type="text" name="equipe" id="equipe" class="form-control">
-        </div>
-       <div class="form-group">
-          <label for="participants">Participants</label>
-          <input value="<?= $person->participants; ?>" type="text" name="participants" id="participants" class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="souper">Souper</label>
-          <input value="<?= $person->souper; ?>" type="text" name="souper" id="souper" class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="commentaires">Commentaire</label>
-          <input value="<?= $person->commenatires; ?>" type="text" name="commenatires" id="commenatires" class="form-control">
-        </div>
-         <div class="form-group">
-          <label for="name">Paye</label>
-          <input value="<?= $person->paye; ?>" type="text" name="paye" id="paye" class="form-control">
-        </div>
-        <div class="form-group">
-          <button type="submit" class="btn btn-info">Ajouter</button>
+        <input type="submit" class="special btn btn-info" value="envoyer" name="create" />
+         
         </div>
       </form>
     </div>
