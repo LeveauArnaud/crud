@@ -6,24 +6,45 @@ $statement = $connection->prepare($sql);
 $statement->execute([':id' => $id ]);
 $person = $statement->fetch(PDO::FETCH_OBJ);
 
-  $nom = $_POST['nom'];
-  $prenom = $_POST['prenom'];
-  $email = $_POST['email'];
-  $equipe = $_POST['equipe'];
-  $participants = $_POST['participants'];
-  $souper = $_POST['souper'];
-  $commentaires = $_POST['commentaires'];
-  $paye = $_POST['paye'];
+//initialise les variables 
+  $nom = NULL;
+  $prenom = NULL;
+  $email = NULL;
+  $equipe = NULL;
+  $participants = NULL;
+  $souper = NULL;
+  $commentaires = NULL;
+  $paye = NULL;
   
-  $sql = 'UPDATE inscriptions SET nom=:nom, prenom=:prenom, email=:email equipe=:equipe, participants=:participants, souper=:souper, commentaires=:commentaires, paye=:paye, WHERE id=:id';
+//Mieux comme ca car on verifie avant que $_POST existe et si oui on utilise la valeur
+if (isset($_POST['nom'])) { $nom = $_POST['nom']; }
+if (isset($_POST['prenom'])) { $prenom = $_POST['prenom']; }
+if (isset($_POST['email'])) { $email = $_POST['email']; }
+if (isset($_POST['equipe'])) { $equipe = $_POST['equipe']; }
+if (isset($_POST['participants'])) { $participants = $_POST['participants']; }
+if (isset($_POST['souper'])) { $souper = $_POST['souper']; }
+if (isset($_POST['commentaires'])) { $commentaires = $_POST['commentaires']; }
+if (isset($_POST['paye'])) { $paye = $_POST['paye']; }
+  
+  if (isset($_POST['create'])) {
+  
+  $sql = 'UPDATE inscriptions SET nom=:nom, prenom=:prenom, email=:email, equipe=:equipe, participants=:participants, souper=:souper, commentaires=:commentaires, paye=:paye WHERE id=:id';
   $statement = $connection->prepare($sql);
-  if ($statement->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':equipe' => $equipe, ':participants' => $participants, ':souper' => $souper, ':commentaires' => $commentaires, ':paye' => $paye, ':id' => $id])) {
-    header("Location: index.php");
+  $statement->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':equipe' => $equipe, ':participants' => $participants, ':souper' => $souper, ':commentaires' => $commentaires, ':paye' => $paye, ':id' => $id]);
+	if ($connection->query($sql)){
+      header ("Location: index.php");
+  		exit();
   }
+  else{
+    echo "Error: ". $sql ."
+". $connection->error;
+  }
+	
+	
+	}
+	
 
-
-
- ?>
+?>
 <!doctype html>
 <html lang="fr">
   <head>
@@ -53,11 +74,6 @@ $person = $statement->fetch(PDO::FETCH_OBJ);
       <h2>Modification participant</h2>
     </div>
     <div class="card-body">
-      <?php if(!empty($message)): ?>
-        <div class="alert alert-success">
-          <?= $message; ?>
-        </div>
-      <?php endif; ?>
       <form method="post">
         <div class="form-group">
           <label for="name">Nom</label>
@@ -92,7 +108,7 @@ $person = $statement->fetch(PDO::FETCH_OBJ);
           <input value="<?= $person->paye; ?>" type="text" name="paye" id="paye" class="form-control">
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-info">Modifier</button>
+          <input type="submit" class="special btn btn-info " value="envoyer" name="create" />
         </div>
       </form>
     </div>
