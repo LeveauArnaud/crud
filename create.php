@@ -1,39 +1,29 @@
 <?php
+require 'db.php';
+// ajout
 if (isset($_POST['create'])) {
  $nom = filter_input(INPUT_POST, 'nom');
  $prenom = filter_input(INPUT_POST, 'prenom');
  $email = filter_input(INPUT_POST, 'email');
- $groupe = filter_input(INPUT_POST, 'equipe');
+ $equipe = filter_input(INPUT_POST, 'equipe');
  $participants = filter_input(INPUT_POST, 'participants');
  $souper = filter_input(INPUT_POST, 'souper');
  $commentaires = filter_input(INPUT_POST, 'commentaires');
  $paye = filter_input(INPUT_POST, 'paye');
 
-$host = "localhost";
-$dbusername = "root";
-$dbpassword = "root";
-$dbname = "25ans";
 
-// Create connection
-$conn = new mysqli ($host, $dbusername, $dbpassword, $dbname);
-
-if (mysqli_connect_error()){
-  die('Connect Error ('. mysqli_connect_errno() .') '
-    . mysqli_connect_error());
-}
-else{
   $sql = "INSERT INTO inscriptions (nom, prenom, email, equipe, participants, souper, commentaires, paye)
   values ('$nom','$prenom','$email','$equipe','$participants','$souper','$commentaires','$paye')";
-  if ($conn->query($sql)){
+  if ($connection->query($sql)){
       	header ("Location: index.php");
   		exit();
   }
   else{
     echo "Error: ". $sql ."
 ". $conn->error;
-  }}}
+  }
+}
 ?>
-
 <!doctype html>
 <html lang="fr">
   <head>
@@ -114,14 +104,13 @@ else{
 									</div>
 									<div class="form-group">
 										<label for="paye">Payé</label>
-										<input type="text" name="paye" placeholder="nombre de personnes participant au souper" class="form-control" required>
+										<input type="text" name="paye" placeholder="" class="form-control" value="non">
 									</div>								
 											
 
-        <div class="form-group">
-        <input type="submit" class="special btn btn-info" value="envoyer" name="create" />
-         
-        </div>
+        <div class="form-group ">
+        <input type="submit" class="special btn btn-info " value="envoyer" name="create" />
+         </div>
       </form>
     </div>
   </div>

@@ -67,7 +67,7 @@ $people = $statement->fetchAll(PDO::FETCH_OBJ);
             <td><?= $person->paye; ?></td>
             <td>
               <a href="edit.php?id=<?= $person->id ?>" class="btn btn-info">Modifier</a>
-              <a onclick="return confirm('êtes vous certain de vouloir supprimer?')" href="delete.php?id=<?= $person->id ?>" class='btn btn-danger'>Supprimer</a>
+              <a onclick="return confirm('êtes vous certain de vouloir supprimer ?')" href="delete.php?id=<?= $person->id ?>" class='btn btn-danger'>Supprimer</a>
             </td>
           </tr>
         <?php endforeach; ?>

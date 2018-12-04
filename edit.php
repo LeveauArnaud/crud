@@ -1,50 +1,60 @@
+
 <?php
+
+
 require 'db.php';
-$id = $_GET['id'];
-$sql = 'SELECT * FROM inscriptions WHERE id=:id';
-$statement = $connection->prepare($sql);
-$statement->execute([':id' => $id ]);
-$person = $statement->fetch(PDO::FETCH_OBJ);
+//récupération 
+$id = intval($_GET['id'] ?? 0);
+$reqRegister = $connection->prepare('SELECT * FROM inscriptions WHERE id = :id');
+$reqRegister->execute([
+    ':id' => $id
+]);
+ 
+//  PDO::FETCH_OBJ  dans
+// $connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+// comme ça tout les fetch et fetchAll() seront défini sur FETCH_OBJ
+$person = $reqRegister->fetch(PDO::FETCH_OBJ);
+ 
+//  php >= 7 vérification
+$nom = $_POST['nom'] ?? null;
+$prenom = $_POST['prenom'] ?? null;
+$email = $_POST['email'] ?? null;
+$equipe = $_POST['equipe'] ?? null;
+$participants = $_POST['participants'] ?? null;
+$souper = $_POST['souper'] ?? null;
+$commentaires = $_POST['commentaires'] ?? null;
+$paye = $_POST['paye'] ?? null;
 
-//initialise les variables 
-  $nom = NULL;
-  $prenom = NULL;
-  $email = NULL;
-  $equipe = NULL;
-  $participants = NULL;
-  $souper = NULL;
-  $commentaires = NULL;
-  $paye = NULL;
-  
-//Mieux comme ca car on verifie avant que $_POST existe et si oui on utilise la valeur
-if (isset($_POST['nom'])) { $nom = $_POST['nom']; }
-if (isset($_POST['prenom'])) { $prenom = $_POST['prenom']; }
-if (isset($_POST['email'])) { $email = $_POST['email']; }
-if (isset($_POST['equipe'])) { $equipe = $_POST['equipe']; }
-if (isset($_POST['participants'])) { $participants = $_POST['participants']; }
-if (isset($_POST['souper'])) { $souper = $_POST['souper']; }
-if (isset($_POST['commentaires'])) { $commentaires = $_POST['commentaires']; }
-if (isset($_POST['paye'])) { $paye = $_POST['paye']; }
-  
-  if (isset($_POST['create'])) {
-  
-  $sql = 'UPDATE inscriptions SET nom=:nom, prenom=:prenom, email=:email, equipe=:equipe, participants=:participants, souper=:souper, commentaires=:commentaires, paye=:paye WHERE id=:id';
-  $statement = $connection->prepare($sql);
-  $statement->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':equipe' => $equipe, ':participants' => $participants, ':souper' => $souper, ':commentaires' => $commentaires, ':paye' => $paye, ':id' => $id]);
-	if ($connection->query($sql)){
-      header ("Location: index.php");
-  		exit();
-  }
-  else{
-    echo "Error: ". $sql ."
-". $connection->error;
-  }
-	
-	
-	}
-	
+// modification
+ 
+if (isset($_POST['create'])) {
+    $reqUpdate = $connection->prepare('UPDATE inscriptions SET
+        nom = :nom,
+        prenom = :prenom,
+        email = :email,
+        equipe = :equipe,
+        participants = :participants,
+        souper = :souper,
+        commentaires = :commentaires,
+        paye = :paye
+        WHERE id = :id');
+     $reqUpdate->execute([
+        ':nom' => $nom,
+        ':prenom' => $prenom,
+        ':email' => $email,
+        ':equipe' => $equipe,
+        ':participants' => $participants,
+        ':souper' => $souper,
+        ':commentaires' => $commentaires,
+        ':paye' => $paye,
+        ':id' => $id
+    ]);
 
+    header('Location: index.php');
+    exit();
+}
 ?>
+
 <!doctype html>
 <html lang="fr">
   <head>
@@ -100,8 +110,8 @@ if (isset($_POST['paye'])) { $paye = $_POST['paye']; }
           <input value="<?= $person->souper; ?>" type="text" name="souper" id="souper" class="form-control">
         </div>
         <div class="form-group">
-          <label for="commentaire">Commentaire</label>
-          <input value="<?= $person->commentaire; ?>" type="text" name="commentaire" id="commentaire" class="form-control">
+          <label for="commentaires">Commentaire</label>
+          <input value="<?= $person->commentaires; ?>" type="text" name="commentaires" id="commentaires" class="form-control">
         </div>
          <div class="form-group">
           <label for="name">Paye</label>
