@@ -1,7 +1,7 @@
 <?php
 $dsn = 'mysql:host=localhost;dbname=25ans';
 
-$username = 'toteeee';
+$username = 'te';
 $password = 'root';
 $options = [];
 try {
