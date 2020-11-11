@@ -1,6 +1,6 @@
 <?php
 $dsn = 'mysql:host=localhost;dbname=25ans';
-$username = 'root';
+$username = 'toto';
 $password = 'root';
 $options = [];
 try {
