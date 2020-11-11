@@ -1,7 +1,9 @@
 <?php
 $dsn = 'mysql:host=localhost;dbname=25ans';
 
+
 $username = 'tddddde';
+
 $password = 'root';
 $options = [];
 try {
